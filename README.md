@@ -74,4 +74,4 @@ Dashboard desarrollado para análisis de adopción de GitHub Copilot en **Tecno 
 
 ---
 
-🔗 **Demo**: [Link al dashboard en vivo](https://tu-dashboard-url.streamlit.app)
+🔗 **Demo**: [Link al dashboard en vivo](https://encuesta-ghcopilot-tasa.streamlit.app/)
