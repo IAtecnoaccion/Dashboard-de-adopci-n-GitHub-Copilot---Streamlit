@@ -129,7 +129,7 @@ def show_portada(df: pd.DataFrame):
     kpis = data_utils.compute_kpis(df)
     
     # Mostrar KPIs
-    col1, col2, col3 = st.columns(3)
+    col1, col2 = st.columns(2)
     
     with col1:
         st.metric(
@@ -138,14 +138,6 @@ def show_portada(df: pd.DataFrame):
         )
     
     with col2:
-        nps_value = kpis.get('nps', 0)
-        st.metric(
-            label="📊 NPS Score",
-            value=f"{nps_value:.0f}%",
-            delta=None
-        )
-    
-    with col3:
         tiempo_value = kpis.get('percibe_ahorro_tiempo', 0)
         st.metric(
             label="⏱️ Percibe Ahorro de Tiempo",
