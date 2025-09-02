@@ -51,7 +51,7 @@ BLOQUES = [
     "Uso",
     "Percepción Individual", 
     "Percepción Equipo",
-    "Texto Libre",
+    "Comentarios de Usuarios",
     "Exportar"
 ]
 

@@ -287,62 +287,52 @@ def show_percepcion_equipo(df: pd.DataFrame):
 
 def show_texto_libre(df: pd.DataFrame):
     """
-    Muestra análisis de respuestas de texto libre.
+    Muestra comentarios individuales de los usuarios.
     """
-    st.header("💬 Respuestas de Texto Libre")
+    st.header("💬 Comentarios de Usuarios")
     st.markdown("---")
     
     if df.empty:
         st.warning("No hay datos disponibles para mostrar.")
         return
-    
+
     # Impedimentos
     st.subheader("🚧 Impedimentos")
     impedimentos = data_utils.get_text_responses(df, Q_IMPEDIMENTOS)
     
     if not impedimentos.empty:
-        st.write(f"**{len(impedimentos)} respuestas encontradas**")
-        st.dataframe(
-            impedimentos[['Nombre', 'Hora de inicio', 'Valor']],
-            use_container_width=True
-        )
+        for _, respuesta in impedimentos.iterrows():
+            st.markdown(f"**{respuesta['Nombre']}** _{respuesta['Hora de inicio']}_")
+            st.markdown(f"_{respuesta['Valor']}_")
+            st.markdown("---")
     else:
         st.info("No hay respuestas sobre impedimentos.")
     
     st.markdown("---")
-    
+
     # Capacitaciones
     st.subheader("🎓 Capacitaciones Sugeridas")
     capacitaciones = data_utils.get_text_responses(df, Q_CAPACITACIONES)
     
     if not capacitaciones.empty:
-        st.write(f"**{len(capacitaciones)} respuestas encontradas**")
-        st.dataframe(
-            capacitaciones[['Nombre', 'Hora de inicio', 'Valor']],
-            use_container_width=True
-        )
+        for _, respuesta in capacitaciones.iterrows():
+            st.markdown(f"**{respuesta['Nombre']}** _{respuesta['Hora de inicio']}_")
+            st.markdown(f"_{respuesta['Valor']}_")
+            st.markdown("---")
     else:
         st.info("No hay respuestas sobre capacitaciones.")
     
     st.markdown("---")
-    
+
     # Comentarios
     st.subheader("💭 Comentarios y Recomendaciones")
     comentarios = data_utils.get_text_responses(df, Q_COMENTARIOS)
     
     if not comentarios.empty:
-        st.write(f"**{len(comentarios)} respuestas encontradas**")
-        
-        # Timeline de comentarios
-        timeline_html = charts.create_timeline_comments(comentarios)
-        st.markdown(timeline_html, unsafe_allow_html=True)
-        
-        # Tabla expandible
-        with st.expander("Ver tabla de comentarios"):
-            st.dataframe(
-                comentarios[['Nombre', 'Hora de inicio', 'Valor']],
-                use_container_width=True
-            )
+        for _, comentario in comentarios.iterrows():
+            st.markdown(f"**{comentario['Nombre']}** _{comentario['Hora de inicio']}_")
+            st.markdown(f"_{comentario['Valor']}_")
+            st.markdown("---")
     else:
         st.info("No hay comentarios disponibles.")
 
@@ -404,7 +394,7 @@ def show_exportar(df: pd.DataFrame):
         comentarios = data_utils.get_text_responses(df, Q_COMENTARIOS)
         
         if not impedimentos.empty or not capacitaciones.empty or not comentarios.empty:
-            if st.button("💬 Exportar Texto Libre", use_container_width=True):
+            if st.button("💬 Exportar Comentarios", use_container_width=True):
                 # Combinar todas las respuestas de texto
                 texto_libre = pd.concat([
                     impedimentos.assign(Tipo='Impedimentos'),
@@ -493,7 +483,7 @@ def main():
         show_percepcion_individual(df_filtered)
     elif bloque_seleccionado == "Percepción Equipo":
         show_percepcion_equipo(df_filtered)
-    elif bloque_seleccionado == "Texto Libre":
+    elif bloque_seleccionado == "Comentarios de Usuarios":
         show_texto_libre(df_filtered)
     elif bloque_seleccionado == "Exportar":
         show_exportar(df_filtered)
