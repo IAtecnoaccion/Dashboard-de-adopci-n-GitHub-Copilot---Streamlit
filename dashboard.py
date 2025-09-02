@@ -107,11 +107,25 @@ def show_portada(df: pd.DataFrame):
     st.header("🤖 Dashboard - Adopción GitHub Copilot")
     st.markdown("---")
     
+    # DEBUG: Mostrar todas las respuestas
+    with st.expander("🔍 DEBUG: Todas las respuestas de la encuesta"):
+        st.write("**Datos completos de la encuesta:**")
+        st.dataframe(df[['Nombre', 'Atributo', 'Valor']].sort_values(['Nombre', 'Atributo']))
+        
+        st.write("**Valores únicos y frecuencias:**")
+        valores_unicos = df['Valor'].value_counts()
+        st.dataframe(valores_unicos)
+        
+        st.write("**Respuestas por atributo:**")
+        for atributo in df['Atributo'].unique():
+            if pd.notna(atributo):
+                st.write(f"**{atributo}:**")
+                respuestas_attr = df[df['Atributo'] == atributo][['Nombre', 'Valor']]
+                st.dataframe(respuestas_attr)
+    
     if df.empty:
         st.warning("No hay datos disponibles para mostrar.")
-        return
-    
-    # Calcular KPIs
+        return    # Calcular KPIs
     kpis = data_utils.compute_kpis(df)
     
     # Mostrar KPIs
@@ -180,11 +194,11 @@ def show_uso(df: pd.DataFrame):
     actividades_stats = data_utils.get_actividades_stats(df)
     
     if not actividades_stats.empty:
-        top_n = st.slider("Mostrar top N actividades:", 5, 20, 10)
+        # Mostrar todas las actividades sin selector Top N
         fig_actividades = charts.create_horizontal_bar_chart(
             actividades_stats,
-            "Actividades más utilizadas",
-            top_n=top_n
+            "Todas las actividades utilizadas",
+            top_n=None  # Mostrar todas
         )
         st.plotly_chart(fig_actividades, use_container_width=True)
         
@@ -228,26 +242,7 @@ def show_percepcion_individual(df: pd.DataFrame):
     likert_stats = data_utils.get_likert_stats(df, Q_YO_PREFIX)
     
     if not likert_stats.empty:
-        col1, col2 = st.columns([2, 1])
-        
-        with col1:
-            # Heatmap
-            fig_heatmap = charts.create_likert_heatmap(
-                likert_stats, 
-                "Percepción Individual - Promedio Likert"
-            )
-            st.plotly_chart(fig_heatmap, use_container_width=True)
-        
-        with col2:
-            # Métricas
-            st.subheader("📊 Métricas Resumen")
-            avg_score = likert_stats['promedio'].mean()
-            avg_agreement = likert_stats['pct_acuerdo'].mean()
-            
-            st.metric("Promedio General", f"{avg_score:.2f}")
-            st.metric("% Promedio de Acuerdo", f"{avg_agreement:.1f}%")
-        
-        # Gráfico apilado
+        # Solo mostrar gráfico apilado
         st.subheader("📊 Distribución de Respuestas")
         fig_stacked = charts.create_likert_stacked_bar(
             df, Q_YO_PREFIX, "Percepción Individual - Distribución"
@@ -276,26 +271,7 @@ def show_percepcion_equipo(df: pd.DataFrame):
     likert_stats = data_utils.get_likert_stats(df, Q_EQ_PREFIX)
     
     if not likert_stats.empty:
-        col1, col2 = st.columns([2, 1])
-        
-        with col1:
-            # Heatmap
-            fig_heatmap = charts.create_likert_heatmap(
-                likert_stats, 
-                "Percepción del Equipo - Promedio Likert"
-            )
-            st.plotly_chart(fig_heatmap, use_container_width=True)
-        
-        with col2:
-            # Métricas
-            st.subheader("📊 Métricas Resumen")
-            avg_score = likert_stats['promedio'].mean()
-            avg_agreement = likert_stats['pct_acuerdo'].mean()
-            
-            st.metric("Promedio General", f"{avg_score:.2f}")
-            st.metric("% Promedio de Acuerdo", f"{avg_agreement:.1f}%")
-        
-        # Gráfico apilado
+        # Solo mostrar gráfico apilado
         st.subheader("📊 Distribución de Respuestas")
         fig_stacked = charts.create_likert_stacked_bar(
             df, Q_EQ_PREFIX, "Percepción del Equipo - Distribución"
