@@ -160,6 +160,7 @@ def show_portada(df: pd.DataFrame):
     # Gráfico de sentimiento
     with col1:
         st.subheader("🎭 Sentimiento hacia GitHub Copilot")
+        st.caption("_¿Cómo te sentirías si ya no pudieras usar más GitHub Copilot?_")
         sentiment_data = df[df['Atributo'] == Q_SENTIMIENTO]
         if not sentiment_data.empty:
             fig_pie = charts.create_sentiment_chart(df, Q_SENTIMIENTO, "pie")
