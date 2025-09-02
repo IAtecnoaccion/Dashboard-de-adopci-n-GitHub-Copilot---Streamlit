@@ -107,25 +107,11 @@ def show_portada(df: pd.DataFrame):
     st.header("🤖 Dashboard - Adopción GitHub Copilot")
     st.markdown("---")
     
-    # DEBUG: Mostrar todas las respuestas
-    with st.expander("🔍 DEBUG: Todas las respuestas de la encuesta"):
-        st.write("**Datos completos de la encuesta:**")
-        st.dataframe(df[['Nombre', 'Atributo', 'Valor']].sort_values(['Nombre', 'Atributo']))
-        
-        st.write("**Valores únicos y frecuencias:**")
-        valores_unicos = df['Valor'].value_counts()
-        st.dataframe(valores_unicos)
-        
-        st.write("**Respuestas por atributo:**")
-        for atributo in df['Atributo'].unique():
-            if pd.notna(atributo):
-                st.write(f"**{atributo}:**")
-                respuestas_attr = df[df['Atributo'] == atributo][['Nombre', 'Valor']]
-                st.dataframe(respuestas_attr)
-    
     if df.empty:
         st.warning("No hay datos disponibles para mostrar.")
-        return    # Calcular KPIs
+        return
+
+    # Calcular KPIs
     kpis = data_utils.compute_kpis(df)
     
     # Mostrar KPIs
@@ -481,49 +467,9 @@ def main():
     elif bloque_seleccionado == "Exportar":
         show_exportar(df_filtered)
     
-    # Mostrar información de debug en sidebar si no hay datos
+    # Mostrar información en sidebar si no hay datos
     if df.empty:
-        with st.sidebar.expander("🔧 Información de Debug"):
-            st.write("**Archivo esperado:** `Encuesta de adopción de GitHub Copilot tabla.xlsx`")
-            st.write("**Ubicación:** Raíz del proyecto")
-            st.write("**Columnas requeridas:**")
-            for col in ["Id", "Hora de inicio", "Hora de finalización", 
-                       "Correo electrónico", "Nombre", "Atributo", "Valor"]:
-                st.write(f"- {col}")
-    else:
-        # Debug para verificar nombres disponibles
-        with st.sidebar.expander("🔧 Debug - Nombres en datos"):
-            nombres_unicos = sorted(df['Nombre'].dropna().unique().tolist())
-            st.write(f"**Total nombres únicos:** {len(nombres_unicos)}")
-            
-            # Buscar "Alexis" específicamente
-            alexis_matches = [n for n in nombres_unicos if 'alexis' in n.lower()]
-            if alexis_matches:
-                st.write("**Nombres con 'Alexis':**")
-                for nombre in alexis_matches:
-                    st.write(f"- '{nombre}' (len: {len(nombre)})")
-                    # Mostrar caracteres especiales
-                    st.write(f"  Repr: {repr(nombre)}")
-            else:
-                st.write("❌ No se encontró ningún nombre con 'Alexis'")
-            
-            st.write("**Primeros 15 nombres:**")
-            for i, nombre in enumerate(nombres_unicos[:15]):
-                st.write(f"{i+1}. '{nombre}'")
-            if len(nombres_unicos) > 15:
-                st.write(f"... y {len(nombres_unicos) - 15} más")
-        
-        # Debug adicional para filtrado
-        with st.sidebar.expander("🔧 Debug - Filtrado"):
-            if personas_seleccionadas:
-                st.write(f"**Personas seleccionadas:** {personas_seleccionadas}")
-                for persona in personas_seleccionadas:
-                    matches = df[df['Nombre'] == persona]
-                    st.write(f"- '{persona}': {len(matches)} registros")
-                    if len(matches) > 0:
-                        st.write(f"  Primeros emails: {matches['Correo electrónico'].unique()[:3].tolist()}")
-            else:
-                st.write("No hay filtros específicos aplicados")
+        st.sidebar.warning("No hay datos disponibles.")
     
     # Footer
     st.markdown("---")
